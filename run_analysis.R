@@ -96,17 +96,18 @@ readData <- function() {
 
 
 df <- readData()
+n <- NCOL(df)
 str(df)
 
 # The 3 variables (subject, activity, dataset_type) that were santized much
-summary(df[,c(1, NROW(df)-1, NROW(df))])
+summary(df[,c(1, n-1, n)])
 
 
 # *** RUBRIC #5: FROM THE DATASET IN STEP4, CREATE A SECOND, INDEPENDENT
 #     TIDY DATASET WITH AVG OF EACH VAR FOR EACH ACTIVITY, FOR EACH SUBJECT ***
 library(dplyr)
-n <- NCOL(df)
 tidy_df <- df %>% group_by(subject, activity) %>% select(2:n-2) %>% summarise_each(funs(mean))
+n <- NCOL(tidy_df)
 summary(tidy_df[,-c(5:80)])  # Just a few first columns to visually check
 
 write.table(tidy_df, file = "getdata_peerassign2_tidy_data.txt", row.names = FALSE)
