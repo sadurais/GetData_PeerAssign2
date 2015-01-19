@@ -1,6 +1,37 @@
 # GetData_PeerAssign2
 Coursera Data Science Speclzn - Getting and Cleaning Data - Peer Assignment 2 
 
+# SYNOPSIS
+The purpose of this project is to demonstrate your ability to collect, work with, and clean a data set. The goal is to prepare tidy data that can be used for later analysis. You will be graded by your peers on a series of yes/no questions related to the project. You will be required to submit: 1) a tidy data set as described below, 2) a link to a Github repository with your script for performing the analysis, and 3) a code book that describes the variables, the data, and any transformations or work that you performed to clean up the data called CodeBook.md. You should also include a README.md in the repo with your scripts. This repo explains how all of the scripts work and how they are connected.  
+
+One of the most exciting areas in all of data science right now is wearable computing - see for example this article . Companies like Fitbit, Nike, and Jawbone Up are racing to develop the most advanced algorithms to attract new users. The data linked to from the course website represent data collected from the accelerometers from the Samsung Galaxy S smartphone. A full description is available at the site where the data was obtained: 
+
+
+# APPROACH
+   Once the zip file 'getdata-projectfiles-UCI HAR Dataset.zip' is unzipped, we see the folowing directory structure inside. 
+```{r echo=TRUE, eval=FALSE}
+    $ tree "UCI HAR Dataset"
+    UCI HAR Dataset
+    ├── test/
+    │   ├── Inertial Signals/
+    │   ├── X_test.txt
+    │   ├── subject_test.txt
+    │   └── y_test.txt
+    ├── train/
+    │   ├── Inertial Signals/
+    │   ├── X_train.txt
+    │   ├── subject_train.txt
+    │   └── y_train.txt
+    ├── README.txt
+    ├── activity_labels.txt
+    ├── features.txt
+    └── features_info.txt
+```
+We can see that the subdirectories 'train' and 'test' have similar structure and data files. We can ignore the Inertial Signals (as per Course Community TA) and focus on the 3 data files 'X', 'subject', and 'y': the 'feature vector values', 'the test subject from whom the device is collecting the activity data', and 'the activity' itself respectively. A quick cursory look at these files show us that these files are space-separated, do not have header lines or quoted values or comment lines, making read.table suitable for reading. Also the 'X' data is 561 variable (columns) data, the entirety of which will not be useful for us, but only the few variables that have to do 'mean' and 'standard deviation' (that is, those that have 'mean' or 'std' in their name, case in-sensitive). 
+We also notice that, at the root directory, we have meta-data files such as 'activity_labels.txt' and 'features.txt' giving meaning to the dataset files inside the 'train' and 'test' subdirectories. 'activity_labels.txt' lists the human understandable labels of the SIX activities: WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING and the features.txt gives the labels for the 561 variables.
+
+
+
 
 ## The complete code is listed below:
 ```{r echo=TRUE, eval=TRUE}
