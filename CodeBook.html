@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Data Set Code Book: Human Activity Sensor Data</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h1>Data Set Code Book: Human Activity Sensor Data</h1>
+
+<p>Prepared By: Sathish Duraisamy
+Date: January 18th, 2015</p>
+
+<h1>Source Credtis</h1>
+
+<p><em>For more and thorough information about the origin/ideas of this dataset, please see</em> <a href="http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones">this link</a></p>
+
+<p>The input dataset contained in getdata-projectfiles-UCI HAR Dataset.zip has the following structure:
+  UCI HAR Dataset
+  ├── test/                  # The test dataset
+  │   ├── Inertial Signals/    # We ignored this in creating the tidy dataset
+  │   ├── X_test.txt           # The accelerameter and gyrosscope and other sensor data values
+  │   ├── subject_test.txt     # An integer code representing the test-subject (human individual)
+  │   └── y_test.txt           # The outcome of the experiment (the names of SIX different activities coded as an integer)
+  ├── train/                 # The training dataset
+  │   ├── Inertial Signals/    # We ignored this in creating the tidy dataset
+  │   ├── X_train.txt          # The accelerameter and gyrosscope and other sensor data values
+  │   ├── subject_train.txt    # An integer code representing the test-subject (human individual)
+  │   └── y_train.txt          # The outcome of the experiment (the names of SIX different activities coded as an integer)
+  ├── README.txt
+  ├── activity_labels.txt    # Has the meaningful names of the SIX discrete activities 
+  ├── features.txt           # Has the names of the 561 feature vector (sensor data)
+  └── features_info.txt     </p>
+
+<h2>Transformations done to the data:</h2>
+
+<ul>
+<li><em>Subsetting the features</em>: Even though there are 561 variables measured 
+   from the sensors, we need only those that measure the &#39;mean&#39; 
+   and &#39;standard deviation&#39;. So we grep for those patterns &#39;mean|std&#39; in
+   the names of the features that we obtain from the features.txt file.</li>
+<li><em>Attach feature-names to the feature data</em>: The feature names and feature 
+   data are conveyed in two different files: features.txt and 
+   {train|test}/X_{train|test}.txt files. We attach the names to the data
+   in our data frame using names(df) &lt;- features_names_vect</li>
+<li><em>Sanitizing the feature labels/names</em>: The feature names from features.txt
+   file have non-word characters such as &#39;-&#39;, &#39;(&#39;, &#39;)&#39; that could cause
+   problems with certain R functions. We find&amp;replace such chars with 
+   a &#39;<em>&#39; using regex:  s/\W+/</em>/g  (global replace a sequence of 1 or more
+   non-word characters into a single underscore).So, &ldquo;tBodyAcc-arCoeff()-X,1&rdquo;
+   becomes &ldquo;tBodyAcc_arCoeff_X_1&rdquo;</li>
+<li><em>Ensuring categorical variables are discrete</em>: Variables with few discrete 
+   values needs to be treated as factors for our further analysis to work
+   nicely. We use &#39;as.factor&#39; to convert these variables (activity &amp; dataset_type)</li>
+<li><em>Combine training and test datasets into one</em>: The subdirectories &#39;train&#39; 
+   and &#39;test&#39; have similar structure. We use modularized code to read them
+   alike and combine them into one data frame using:
+   df &lt;- training-set&#39;s data
+   df &lt;- cbind(df, testing-set&#39;s data)</li>
+<li><em>Grouping &amp; Summarizing our data</em>: We first group by test-subject, then the
+   activity and finally take the mean of all the other variables (with index
+   2:ncol-2). With these variables we create our final tidy dataset. This
+   second dataset is stored in a file: getdata_peerassign2_tidy_data.txt
+   as space separated values, for quicker reading by read.table</li>
+</ul>
+
+<h2>Final variables:  Mean values grouped by (subject, activity)</h2>
+
+<ul>
+<li>subject           - The test subject</li>
+<li>activity          - One of six activities coded as an integer (factor var). </li>
+<li>tBodyAcc_mean_X   - TimeSeries data of various dimensions of Accelerometer</li>
+<li>tBodyAcc_mean_Y   -     and Gyrosscope follow</li>
+<li>tBodyAcc_mean_Z</li>
+<li>tBodyAcc_std_X</li>
+<li>tBodyAcc_std_Y</li>
+<li>tBodyAcc_std_Z</li>
+<li>tGravityAcc_mean_X</li>
+<li>tGravityAcc_mean_Y</li>
+<li>tGravityAcc_mean_Z</li>
+<li>tGravityAcc_std_X</li>
+<li>tGravityAcc_std_Y</li>
+<li>tGravityAcc_std_Z</li>
+<li>tBodyAccJerk_mean_X</li>
+<li>tBodyAccJerk_mean_Y</li>
+<li>tBodyAccJerk_mean_Z</li>
+<li>tBodyAccJerk_std_X</li>
+<li>tBodyAccJerk_std_Y</li>
+<li>tBodyAccJerk_std_Z</li>
+<li>tBodyGyro_mean_X</li>
+<li>tBodyGyro_mean_Y</li>
+<li>tBodyGyro_mean_Z</li>
+<li>tBodyGyro_std_X</li>
+<li>tBodyGyro_std_Y</li>
+<li>tBodyGyro_std_Z</li>
+<li>tBodyGyroJerk_mean_X</li>
+<li>tBodyGyroJerk_mean_Y</li>
+<li>tBodyGyroJerk_mean_Z</li>
+<li>tBodyGyroJerk_std_X</li>
+<li>tBodyGyroJerk_std_Y</li>
+<li>tBodyGyroJerk_std_Z</li>
+<li>tBodyAccMag<em>mean</em></li>
+<li>tBodyAccMag<em>std</em></li>
+<li>tGravityAccMag<em>mean</em></li>
+<li>tGravityAccMag<em>std</em></li>
+<li>tBodyAccJerkMag<em>mean</em></li>
+<li>tBodyAccJerkMag<em>std</em></li>
+<li>tBodyGyroMag<em>mean</em></li>
+<li>tBodyGyroMag<em>std</em></li>
+<li>tBodyGyroJerkMag<em>mean</em></li>
+<li>tBodyGyroJerkMag<em>std</em></li>
+<li>fBodyAcc_mean_X</li>
+<li>fBodyAcc_mean_Y</li>
+<li>fBodyAcc_mean_Z</li>
+<li>fBodyAcc_std_X</li>
+<li>fBodyAcc_std_Y</li>
+<li>fBodyAcc_std_Z</li>
+<li>fBodyAcc_meanFreq_X</li>
+<li>fBodyAcc_meanFreq_Y</li>
+<li>fBodyAcc_meanFreq_Z</li>
+<li>fBodyAccJerk_mean_X</li>
+<li>fBodyAccJerk_mean_Y</li>
+<li>fBodyAccJerk_mean_Z</li>
+<li>fBodyAccJerk_std_X</li>
+<li>fBodyAccJerk_std_Y</li>
+<li>fBodyAccJerk_std_Z</li>
+<li>fBodyAccJerk_meanFreq_X</li>
+<li>fBodyAccJerk_meanFreq_Y</li>
+<li>fBodyAccJerk_meanFreq_Z</li>
+<li>fBodyGyro_mean_X<br/></li>
+<li>fBodyGyro_mean_Y</li>
+<li>fBodyGyro_mean_Z</li>
+<li>fBodyGyro_std_X</li>
+<li>fBodyGyro_std_Y</li>
+<li>fBodyGyro_std_Z</li>
+<li>fBodyGyro_meanFreq_X</li>
+<li>fBodyGyro_meanFreq_Y</li>
+<li>fBodyGyro_meanFreq_Z</li>
+<li>fBodyAccMag<em>mean</em></li>
+<li>fBodyAccMag<em>std</em></li>
+<li>fBodyAccMag<em>meanFreq</em></li>
+<li>fBodyBodyAccJerkMag<em>mean</em></li>
+<li>fBodyBodyAccJerkMag<em>std</em></li>
+<li>fBodyBodyAccJerkMag<em>meanFreq</em></li>
+<li>fBodyBodyGyroMag<em>mean</em><br/></li>
+<li>fBodyBodyGyroMag<em>std</em></li>
+<li>fBodyBodyGyroMag<em>meanFreq</em></li>
+<li>fBodyBodyGyroJerkMag<em>mean</em></li>
+<li>fBodyBodyGyroJerkMag<em>std</em></li>
+<li>fBodyBodyGyroJerkMag<em>meanFreq</em></li>
+<li>angle<em>tBodyAccMean_gravity</em></li>
+<li>angle<em>tBodyAccJerkMean_gravityMean</em></li>
+<li>angle<em>tBodyGyroMean_gravityMean</em></li>
+<li>angle<em>tBodyGyroJerkMean_gravityMean</em></li>
+<li>angle<em>X_gravityMean</em></li>
+<li>angle<em>Y_gravityMean</em></li>
+<li>angle_Z_gravityMean</li>
+</ul>
+
+<p>&ndash;end&ndash;</p>
+
+</body>
+
+</html>

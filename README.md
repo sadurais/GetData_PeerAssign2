@@ -1,14 +1,12 @@
 # GetData_PeerAssign2
 Coursera Data Science Speclzn - Getting and Cleaning Data - Peer Assignment 2 
 
-# SYNOPSIS
-The purpose of this project is to demonstrate your ability to collect, work with, and clean a data set. The goal is to prepare tidy data that can be used for later analysis. You will be graded by your peers on a series of yes/no questions related to the project. You will be required to submit: 1) a tidy data set as described below, 2) a link to a Github repository with your script for performing the analysis, and 3) a code book that describes the variables, the data, and any transformations or work that you performed to clean up the data called CodeBook.md. You should also include a README.md in the repo with your scripts. This repo explains how all of the scripts work and how they are connected.  
-
-One of the most exciting areas in all of data science right now is wearable computing - see for example this article . Companies like Fitbit, Nike, and Jawbone Up are racing to develop the most advanced algorithms to attract new users. The data linked to from the course website represent data collected from the accelerometers from the Samsung Galaxy S smartphone. A full description is available at the site where the data was obtained: 
+## SYNOPSIS
+The goal of this project is to collect, work with, and clean a data set to prepare a filtered, tidy data that can be used for later analysis. The dataset is about wearable computing. Companies like Fitbit, Nike, and Jawbone Up are racing to develop the most advanced algorithms to attract new users. The data that we have represent data collected from the accelerometers from the Samsung Galaxy S smartphone. We read, process and transform the data into a tidy dataset and store it another file for further analysis.
 
 
-# APPROACH
-   Once the zip file 'getdata-projectfiles-UCI HAR Dataset.zip' is unzipped, we see the folowing directory structure inside. 
+## APPROACH
+We see the following structure inside out dataset zip file 'getdata-projectfiles-UCI HAR Dataset.zip'. 
 
 ```r
     $ tree "UCI HAR Dataset"
@@ -28,13 +26,91 @@ One of the most exciting areas in all of data science right now is wearable comp
     ├── features.txt
     └── features_info.txt
 ```
-We can see that the subdirectories 'train' and 'test' have similar structure and data files. We can ignore the Inertial Signals (as per Course Community TA) and focus on the 3 data files 'X', 'subject', and 'y': the 'feature vector values', 'the test subject from whom the device is collecting the activity data', and 'the activity' itself respectively. A quick cursory look at these files show us that these files are space-separated, do not have header lines or quoted values or comment lines, making read.table suitable for reading. Also the 'X' data is 561 variable (columns) data, the entirety of which will not be useful for us, but only the few variables that have to do 'mean' and 'standard deviation' (that is, those that have 'mean' or 'std' in their name, case in-sensitive). 
+We can see that the subdirectories 'train' and 'test' have similar structure and data files. We focus on the 3 data files 'X', 'subject', and 'y': the 'feature vector values', 'the test subject from whom the device is collecting the activity data', and 'the activity' itself respectively. A quick cursory look at these files show us that these files are space-separated, do not have header lines or quoted values or comment lines, making read.table suitable for reading. Also the 'X' data is 561 variable (columns) data, the entirety of which will not be useful for us, but only the few variables that have to do 'mean' and 'standard deviation' (that is, those that have 'mean' or 'std' in their name, case in-sensitive). 
 We also notice that, at the root directory, we have meta-data files such as 'activity_labels.txt' and 'features.txt' giving meaning to the dataset files inside the 'train' and 'test' subdirectories. 'activity_labels.txt' lists the human understandable labels of the SIX activities: WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING and the features.txt gives the labels for the 561 variables.
 
 
+## Source Credtis
+  *For more and thorough information about the origin/ideas of this dataset, please see* [this link][1]
+  [1]: http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones
+  
 
 
-## The complete code is listed below:
+## Transformations done to the data:
+  - *Subsetting the features*: Even though there are 561 variables measured
+       from the sensors, we need only those that measure the 'mean'
+       and 'standard deviation'. So we grep for those patterns 'mean|std' in
+       the names of the features that we obtain from the features.txt file.
+  - *Attach feature-names to the feature data*: The feature names and feature
+       data are conveyed in two different files: features.txt and
+       {train|test}/X_{train|test}.txt files. We attach the names to the data
+       in our data frame using names(df) <- features_names_vect
+  - *Sanitizing the feature labels/names*: The feature names from features.txt
+       file have non-word characters such as '-', '(', ')' that could cause
+       problems with certain R functions. We find&replace such chars with
+       a '_' using regex:  s/\W+/_/g  (global replace a sequence of 1 or more
+       non-word characters into a single underscore).So, "tBodyAcc-arCoeff()-X,1"
+       becomes "tBodyAcc_arCoeff_X_1"
+  - *Ensuring categorical variables are discrete*: Variables with few discrete
+       values needs to be treated as factors for our further analysis to work
+       nicely. We use 'as.factor' to convert these variables (activity & dataset_type)
+  - *Combine training and test datasets into one*: The subdirectories 'train'
+       and 'test' have similar structure. We use modularized code to read them
+       alike and combine them into one data frame using:
+       df <- training-set's data
+       df <- cbind(df, testing-set's data)
+  - *Grouping & Summarizing our data*: We first group by test-subject, then the
+       activity and finally take the mean of all the other variables (with index
+       2:ncol-2). With these variables we create our final tidy dataset. This
+       second dataset is stored in a file: getdata_peerassign2_tidy_data.txt
+       as space separated values, for quicker reading by read.table
+
+## Transformation steps
+  First we devlop few handy functions:
+
+```r
+#Handy function to construct and return the filepath
+filePath <- function(datasetType="train", fileNamePrefix="y") {
+    directory <- "UCI HAR Dataset"
+    path <- paste(directory, "/", datasetType, "/",
+                fileNamePrefix, "_", datasetType, ".txt", sep="")
+    path
+}
+```
+
+
+```r
+# Handy function to keep read.table params, setting varNames
+# and subsetting variables(columns) in one place.
+readTable <- function(datasetType="train", fileNamePrefix="y",
+                      varIndices=NA, varNames=NA) {
+    df = read.table(filePath(datasetType, fileNamePrefix), header=FALSE,
+               sep="", quote="", comment.char="",
+               nrow=7400, colClasses=c("numeric"))
+    if (!is.na(varIndices)) df <- df[, varIndices]
+    if (!is.na(varNames)) names(df) <- varNames
+    df
+}
+```
+If variable indices are passed, this function would subset the data frame 
+to have only those variables(columns).  If variable names are passed,
+it assigns them to the variables(columns).
+
+
+
+```r
+# Similar to readTable, but reads the meta-data files such as
+# features.txt and activity_labels.txt rather than a data file.
+readMetaTable <- function(fileName) {
+    directory <- "UCI HAR Dataset"
+    filePath <- paste(directory, "/", fileName, sep="")
+    read.table(filePath, header=FALSE, sep="", quote="",
+               comment.char="")
+}
+```
+
+
+## The complete code (with annotations to the RUBRICs) is listed below:
 
 ```r
 #
@@ -134,6 +210,29 @@ readData <- function() {
 
 
 df <- readData()
+```
+
+```
+## Warning in if (!is.na(varIndices)) df <- df[, varIndices]: the condition
+## has length > 1 and only the first element will be used
+```
+
+```
+## Warning in if (!is.na(varNames)) names(df) <- varNames: the condition has
+## length > 1 and only the first element will be used
+```
+
+```
+## Warning in if (!is.na(varIndices)) df <- df[, varIndices]: the condition
+## has length > 1 and only the first element will be used
+```
+
+```
+## Warning in if (!is.na(varNames)) names(df) <- varNames: the condition has
+## length > 1 and only the first element will be used
+```
+
+```r
 n <- NCOL(df)
 str(df)
 ```
@@ -297,3 +396,5 @@ summary(tidy_df[,-c(5:80)])  # Just a few first columns to visually check
 ```r
 write.table(tidy_df, file = "getdata_peerassign2_tidy_data.txt", row.names = FALSE)
 ```
+
+For details about the data transformations done please look at the CodeBook.md file.
