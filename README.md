@@ -30,7 +30,7 @@ We can see that the subdirectories 'train' and 'test' have similar structure and
 We also notice that, at the root directory, we have meta-data files such as 'activity_labels.txt' and 'features.txt' giving meaning to the dataset files inside the 'train' and 'test' subdirectories. 'activity_labels.txt' lists the human understandable labels of the SIX activities: WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING and the features.txt gives the labels for the 561 variables.
 
 
-## Source Credtis
+## Source Credits
   *For more and thorough information about the origin/ideas of this dataset, please see* [this link][1]
   [1]: http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones
   

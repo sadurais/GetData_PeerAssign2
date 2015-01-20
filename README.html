@@ -234,7 +234,7 @@ hr {
 <p>We can see that the subdirectories &#39;train&#39; and &#39;test&#39; have similar structure and data files. We focus on the 3 data files &#39;X&#39;, &#39;subject&#39;, and &#39;y&#39;: the &#39;feature vector values&#39;, &#39;the test subject from whom the device is collecting the activity data&#39;, and &#39;the activity&#39; itself respectively. A quick cursory look at these files show us that these files are space-separated, do not have header lines or quoted values or comment lines, making read.table suitable for reading. Also the &#39;X&#39; data is 561 variable (columns) data, the entirety of which will not be useful for us, but only the few variables that have to do &#39;mean&#39; and &#39;standard deviation&#39; (that is, those that have &#39;mean&#39; or &#39;std&#39; in their name, case in-sensitive). 
 We also notice that, at the root directory, we have meta-data files such as &#39;activity_labels.txt&#39; and &#39;features.txt&#39; giving meaning to the dataset files inside the &#39;train&#39; and &#39;test&#39; subdirectories. &#39;activity_labels.txt&#39; lists the human understandable labels of the SIX activities: WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING and the features.txt gives the labels for the 561 variables.</p>
 
-<h2>Source Credtis</h2>
+<h2>Source Credits</h2>
 
 <p><em>For more and thorough information about the origin/ideas of this dataset, please see</em> <a href="http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones">this link</a></p>
 
