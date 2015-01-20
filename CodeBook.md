@@ -4,12 +4,12 @@ Prepared By: Sathish Duraisamy
 Date: January 18th, 2015
 
 
-# Source Credtis
+# Source Credits
 *For more and thorough information about the origin/ideas of this dataset, please see* [this link][1]
 [1]: http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones
 
-
 The input dataset contained in getdata-projectfiles-UCI HAR Dataset.zip has the following structure:
+`
   UCI HAR Dataset
   ├── test/                  # The test dataset
   │   ├── Inertial Signals/    # We ignored this in creating the tidy dataset
@@ -25,7 +25,7 @@ The input dataset contained in getdata-projectfiles-UCI HAR Dataset.zip has the 
   ├── activity_labels.txt    # Has the meaningful names of the SIX discrete activities 
   ├── features.txt           # Has the names of the 561 feature vector (sensor data)
   └── features_info.txt     
-
+`
 
 
 ## Transformations done to the data:
